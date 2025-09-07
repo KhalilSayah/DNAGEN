@@ -35,7 +35,7 @@ function App() {
   const [isDragOver, setIsDragOver] = useState(false)
   const [emergencyMode, setEmergencyMode] = useState(false)
   const [currentAlert, setCurrentAlert] = useState<string | null>(null)
-  const [alertQueue, setAlertQueue] = useState<string[]>([])
+
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [verificationResult, setVerificationResult] = useState<string>('')
   const fileInputRef = useRef<HTMLInputElement>(null)
