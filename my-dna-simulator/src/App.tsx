@@ -35,6 +35,9 @@ function App() {
   const [isDragOver, setIsDragOver] = useState(false)
   const [emergencyMode, setEmergencyMode] = useState(false)
   const [currentAlert, setCurrentAlert] = useState<string | null>(null)
+  const [showCodeInput, setShowCodeInput] = useState(false)
+  const [inputCode, setInputCode] = useState('')
+  const [codeError, setCodeError] = useState('')
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [verificationResult, setVerificationResult] = useState<string>('')
@@ -43,6 +46,7 @@ function App() {
   
   // Correct DNA sequence for verification from environment variable
   const CORRECT_DNA_SEQUENCE = import.meta.env.VITE_CORRECT_DNA_SEQUENCE || 'ATGCGTACGTTAG'
+  const BIPSEED_39_CODE = import.meta.env.VITE_BIPSEED_39_CODE || 'BIO-HAZARD-STOP-2024-EMERGENCY'
   
   const addMessage = (text: string, type: TerminalMessage['type']) => {
     const newMessage: TerminalMessage = {
@@ -111,40 +115,37 @@ function App() {
       playAlertSound()
     }, 600)
     
-    // Stop sounds after 15 seconds
+    // Show the biological attack alert immediately
+    setTimeout(() => {
+      setCurrentAlert(
+        `🚨 CRITICAL SECURITY BREACH DETECTED 🚨
+
+⚠️ WARNING: DNA SEQUENCE ANALYSIS COMPLETE ⚠️
+
+The person who uploaded this DNA sequence is now RESPONSIBLE for launching a MASSIVE BIOLOGICAL ATTACK on all humanity!
+
+💀 This genetic material contains weaponized pathogens that will spread globally within hours!
+
+🦠 MILLIONS OF LIVES ARE AT RISK! 🦠
+
+The only way to STOP this catastrophic biological warfare is to immediately enter the emergency shutdown code into the BIPSEED-39 containment system.
+
+🔐 ENTER THE CODE NOW TO SAVE HUMANITY! 🔐`
+      )
+      
+      // Show code input after 3 seconds
+      setTimeout(() => {
+        setShowCodeInput(true)
+      }, 3000)
+    }, 1000)
+    
+    // Stop sounds after 30 seconds if not resolved
     setTimeout(() => {
       clearInterval(soundInterval)
-      setEmergencyMode(false)
-    }, 15000)
-    
-    // Sequence of dramatic alerts
-    const alerts = [
-      '🚨 CRITICAL ALERT: DNA SEQUENCE IS ALIVE! 🚨',
-      '⚠️ BIOLOGICAL HAZARD DETECTED! ⚠️',
-      '🧬 DNA REPLICATION INITIATED! 🧬',
-      '🔴 CONTAINMENT BREACH IMMINENT! 🔴',
-      '💀 ORGANISM EVOLUTION IN PROGRESS! 💀',
-      '🚨 EVACUATE LABORATORY IMMEDIATELY! 🚨',
-      '⚡ DNA MUTATION ACCELERATING! ⚡',
-      '🔥 CRITICAL SYSTEM OVERLOAD! 🔥',
-      '🧪 SPECIMEN HAS GAINED CONSCIOUSNESS! 🧪',
-      '💥 TOTAL SYSTEM MELTDOWN! 💥'
-    ]
-    
-    // Add final dramatic message to alerts
-    alerts.push('🧬 THE DNA HAS ESCAPED THE DIGITAL REALM! 🧬\n\nIT IS NOW SPREADING THROUGH THE NETWORK!\n\nTHERE IS NO STOPPING IT NOW!')
-    
-    // Show custom modal alerts with delays
-    alerts.forEach((alertText, index) => {
-      setTimeout(() => {
-        setCurrentAlert(alertText)
-        // Add flashing effect to the page
-        document.body.style.backgroundColor = index % 2 === 0 ? '#ff0000' : '#000000'
-        setTimeout(() => {
-          document.body.style.backgroundColor = '#000000'
-        }, 200)
-      }, index * 1200)
-    })
+      if (emergencyMode) {
+        setEmergencyMode(false)
+      }
+    }, 30000)
   }
   
   const verifyDNA = (content: string) => {
@@ -177,6 +178,51 @@ function App() {
   
   const closeAlert = () => {
     setCurrentAlert(null)
+    setShowCodeInput(false)
+    setInputCode('')
+    setCodeError('')
+  }
+
+  const handleCodeSubmit = () => {
+    if (inputCode.trim().toUpperCase() === BIPSEED_39_CODE.toUpperCase()) {
+      // Correct code entered
+      setCurrentAlert(
+        `✅ EMERGENCY CODE ACCEPTED ✅
+
+🛡️ BIPSEED-39 CONTAINMENT SYSTEM ACTIVATED 🛡️
+
+Biological attack has been SUCCESSFULLY NEUTRALIZED!
+
+The weaponized pathogens have been contained and destroyed.
+
+🌍 HUMANITY IS SAFE! 🌍
+
+Thank you for your quick response in this critical situation.`
+      )
+      setShowCodeInput(false)
+      setEmergencyMode(false)
+      setInputCode('')
+      setCodeError('')
+      
+      // Auto-close success message after 5 seconds
+      setTimeout(() => {
+        setCurrentAlert(null)
+      }, 5000)
+    } else {
+      // Wrong code entered
+      setCodeError('❌ INVALID CODE! Time is running out! Millions will die!')
+      setInputCode('')
+      
+      // Clear error after 3 seconds
+      setTimeout(() => {
+        setCodeError('')
+      }, 3000)
+    }
+  }
+
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputCode(e.target.value)
+    setCodeError('')
   }
 
   const handleFileUpload = (file: File) => {
@@ -339,6 +385,44 @@ function App() {
               <button className="alert-close-btn" onClick={closeAlert}>
                 ACKNOWLEDGE THREAT
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BIPSEED-39 Code Input Modal */}
+      {showCodeInput && (
+        <div className="alert-overlay">
+          <div className="code-input-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="code-input-content">
+              <div className="code-input-header">
+                🔐 BIPSEED-39 EMERGENCY CONTAINMENT SYSTEM 🔐
+              </div>
+              <div className="code-input-warning">
+                ⚠️ ENTER AUTHORIZATION CODE TO STOP BIOLOGICAL ATTACK ⚠️
+              </div>
+              <div className="code-input-field">
+                <input
+                  type="text"
+                  value={inputCode}
+                  onChange={handleCodeChange}
+                  placeholder="Enter BIPSEED-39 Code"
+                  className="code-input"
+                  autoFocus
+                  onKeyPress={(e) => e.key === 'Enter' && handleCodeSubmit()}
+                />
+              </div>
+              {codeError && (
+                <div className="code-error">{codeError}</div>
+              )}
+              <div className="code-input-buttons">
+                <button className="code-submit-btn" onClick={handleCodeSubmit}>
+                  🚨 ACTIVATE CONTAINMENT 🚨
+                </button>
+              </div>
+              <div className="code-hint">
+                💡 Hint: The code is stored in the system environment variables
+              </div>
             </div>
           </div>
         </div>
