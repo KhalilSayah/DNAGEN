@@ -98,15 +98,31 @@ The project includes:
 ### Build Fails
 - Check TypeScript errors: `npm run build`
 - Ensure all dependencies are installed: `npm install`
+- Verify Node.js version is 18+ in Vercel settings
 
 ### Environment Variables Not Working
 - Verify variable names start with `VITE_`
 - Check Vercel dashboard environment variables
 - Redeploy after adding variables
+- Ensure variables are set for all environments (Production, Preview, Development)
 
 ### 404 Errors on Refresh
 - The `vercel.json` file handles SPA routing
 - Ensure the file is in your repository root
+- Check that `rewrites` configuration is correct
+
+### Deployment Not Starting
+- Ensure `vercel.json` is in the repository root
+- Check that `buildCommand` and `outputDirectory` are correctly set
+- Verify all files are committed and pushed to Git
+- Try redeploying from Vercel dashboard
+- Check build logs in Vercel for specific errors
+
+### White Screen or App Not Loading
+- Check browser console for JavaScript errors
+- Verify all assets are loading correctly (CSS, JS files)
+- Ensure environment variables are properly set
+- Check that the build works locally with `npm run preview`
 
 ## Support
 
